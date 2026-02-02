@@ -1,1 +1,1 @@
-See wiki for instructions: https://github.com/UCSC-CSE-114A/02-random-art/wiki/README
+See wiki for instructions: https://github.com/ucsc-cse114a-01-sp25/02-random-art/wiki/README
