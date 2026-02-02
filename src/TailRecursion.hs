@@ -3,6 +3,8 @@
      See the README for instructions.
  -}
 
+{- HLINT ignore -}
+
 module TailRecursion where
 
 import Prelude hiding (lookup,reverse)

@@ -2,6 +2,8 @@
 
 {-# LANGUAGE FlexibleContexts #-}
 
+{- HLINT ignore -}
+
 module RandomArt where
 
 import           Text.Printf (printf)
