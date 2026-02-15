@@ -78,14 +78,24 @@ sampleExpr3 =
 -- >>> exprToString sampleExpr2
 -- "(x<y?sin(pi*x):cos(pi*y))"
 
+-- exprToString :: Expr -> String
+-- exprToString VarX                 = "x"
+-- exprToString VarY                 = error "TBD:VarY"
 exprToString :: Expr -> String
 exprToString VarX                 = "x"
-exprToString VarY                 = error "TBD:VarY"
-exprToString (Sine e)             = error "TBD:Sin"
-exprToString (Cosine e)           = error "TBD:Cos"
-exprToString (Average e1 e2)      = error "TBD:Avg"
-exprToString (Times e1 e2)        = error "TBD:Times"
-exprToString (Thresh e1 e2 e3 e4) = error "TBD:Thresh"
+exprToString VarY                 = "y"
+-- exprToString (Sine e)             = error "TBD:Sin"
+-- exprToString (Cosine e)           = error "TBD:Cos"
+-- exprToString (Average e1 e2)      = error "TBD:Avg"
+-- exprToString (Times e1 e2)        = error "TBD:Times"
+-- exprToString (Thresh e1 e2 e3 e4) = error "TBD:Thresh"
+exprToString (Sine e)             = "sin(pi*" ++ exprToString e ++ ")"
+exprToString (Cosine e)           = "cos(pi*" ++ exprToString e ++ ")"
+exprToString (Average e1 e2)      = "((" ++ exprToString e1 ++ "+" ++ exprToString e2 ++ ")/2)"
+exprToString (Times e1 e2)        = exprToString e1 ++ "*" ++ exprToString e2
+exprToString (Thresh e1 e2 e3 e4) =
+  "(" ++ exprToString e1 ++ "<" ++ exprToString e2 ++ "?"
+      ++ exprToString e3 ++ ":" ++ exprToString e4 ++ ")"
 
 --------------------------------------------------------------------------------
 -- | Evaluating arithmetic expressions at a given (x, y)-coordinate ------------
@@ -100,8 +110,19 @@ exprToString (Thresh e1 e2 e3 e4) = error "TBD:Thresh"
 -- >>> eval  0.5 0.2    sampleExpr2
 -- 0.8090169943749475
 
+-- eval :: Double -> Double -> Expr -> Double
+-- eval x y e = error "TBD:eval"
 eval :: Double -> Double -> Expr -> Double
-eval x y e = error "TBD:eval"
+eval x y VarX = x
+eval x y VarY = y
+eval x y (Sine e) = sin (pi * eval x y e)
+eval x y (Cosine e) = cos (pi * eval x y e)
+eval x y (Average e1 e2) = (eval x y e1 + eval x y e2) / 2
+eval x y (Times e1 e2) = eval x y e1 * eval x y e2
+eval x y (Thresh a b c d)
+  | eval x y a < eval x y b = eval x y c
+  | otherwise               = eval x y d
+
 
 evalFn :: Double -> Double -> Expr -> Double
 evalFn x y e = assert (-1.0 <= rv && rv <= 1.0) rv
@@ -122,7 +143,18 @@ build 0
   | otherwise = VarY
   where
     r         = rand 10
-build d       = error "TBD:build"
+-- build d       = error "TBD:build"
+build d =
+  case rand 100 of
+    r | r < 10  -> VarX
+      | r < 20  -> VarY
+      | r < 40  -> Sine   (build (d-1))
+      | r < 60  -> Cosine (build (d-1))
+      | r < 75  -> Average (build (d-1)) (build (d-1))
+      | r < 90  -> Times   (build (d-1)) (build (d-1))
+      | otherwise ->
+          Thresh (build (d-1)) (build (d-1)) (build (d-1)) (build (d-1))
+
 
 --------------------------------------------------------------------------------
 -- | Best Image "Seeds" --------------------------------------------------------
@@ -130,16 +162,22 @@ build d       = error "TBD:build"
 
 -- grayscale
 g1, g2, g3 :: (Int, Int)
-g1 = (error "TBD:depth1", error "TBD:seed1")
-g2 = (error "TBD:depth2", error "TBD:seed2")
-g3 = (error "TBD:depth3", error "TBD:seed3")
+-- g1 = (error "TBD:depth1", error "TBD:seed1")
+-- g2 = (error "TBD:depth2", error "TBD:seed2")
+-- g3 = (error "TBD:depth3", error "TBD:seed3")
+g1 = (8, 12)
+g2 = (9, 42)
+g3 = (10, 99)
 
 
 -- color
 c1, c2, c3 :: (Int, Int)
-c1 = (error "TBD:depth1", error "TBD:seed1")
-c2 = (error "TBD:depth2", error "TBD:seed2")
-c3 = (error "TBD:depth3", error "TBD:seed3")
+-- c1 = (error "TBD:depth1", error "TBD:seed1")
+-- c2 = (error "TBD:depth2", error "TBD:seed2")
+-- c3 = (error "TBD:depth3", error "TBD:seed3")
+c1 = (8, 17)
+c2 = (9, 23)
+c3 = (10, 71)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

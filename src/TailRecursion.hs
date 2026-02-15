@@ -26,7 +26,14 @@ import Prelude hiding (lookup,reverse)
 -- 0
 
 assoc :: Int -> String -> [(String, Int)] -> Int
-assoc def key kvs = error "TBD: assoc"
+-- assoc def key kvs = error "TBD: assoc"
+assoc def key kvs = go kvs
+  where
+    go [] = def
+    go ((k,v):rest)
+      | k == key  = v
+      | otherwise = go rest
+
 
 --------------------------------------------------------------------------------
 
@@ -45,7 +52,12 @@ assoc def key kvs = error "TBD: assoc"
 -- []
 
 listReverseTR :: [a] -> [a]
-listReverseTR xs = error "TBD: listReverseTR"
+-- listReverseTR xs = error "TBD: listReverseTR"
+listReverseTR xs = go xs []
+  where
+    go [] acc     = acc
+    go (y:ys) acc = go ys (y:acc)
+
 
 -- | Double every other integer in a list,
 --   starting with the second element.
@@ -62,7 +74,15 @@ listReverseTR xs = error "TBD: listReverseTR"
 -- []
 
 doubleEveryOtherTR :: [Integer] -> [Integer]
-doubleEveryOtherTR xs = error "TBD: doubleEveryOtherTR"
+-- doubleEveryOtherTR xs = error "TBD: doubleEveryOtherTR"
+doubleEveryOtherTR xs = listReverseTR (go xs False [])
+  where
+    -- False = don't double this one (1st, 3rd, 5th, ...)
+    -- True  = double this one (2nd, 4th, 6th, ...)
+    go [] _ acc         = acc
+    go (y:ys) False acc = go ys True  (y:acc)
+    go (y:ys) True  acc = go ys False ((2*y):acc)
+
 
 -- | Sum the elements of a list of `Integer`s.
 --
@@ -78,4 +98,8 @@ doubleEveryOtherTR xs = error "TBD: doubleEveryOtherTR"
 -- 36
 
 sumListTR :: [Integer] -> Integer
-sumListTR xs = error "TBD: sumListTR"
+-- sumListTR xs = error "TBD: sumListTR"
+sumListTR xs = go xs 0
+  where
+    go [] acc     = acc
+    go (y:ys) acc = go ys (acc + y)
